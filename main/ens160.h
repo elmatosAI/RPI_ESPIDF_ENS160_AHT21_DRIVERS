@@ -1,12 +1,8 @@
 #ifndef ENS160_H // include guard
 #define ENS160_H
 
-
-#pragma once
-#include <driver/i2c.h>
-#include <esp_log.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
+// include Raspberry Pi i2c library smbus2
+#include <stdint.h>
 #include <stdio.h>
 
 #define ENS160_REG_OPMODE       0x10
@@ -20,7 +16,6 @@
 #define ENS160_MODE_SLEEP       0x00
 #define ENS160_MODE_IDLE        0x01
 #define ENS160_MODE_STANDARD    0x02
-
 
 
 void ENS160_SET_ID(uint8_t ens160_addr);

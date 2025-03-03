@@ -1,80 +1,57 @@
-#include <driver/i2c.h>
-#include <esp_log.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
+// program for testing ENS160 i2c sensor with a Raspberry Pi Model 2B
+// include raspberry pi i2c library
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+// include pigpio library
+#include <pigpio.h>
 #include "ens160.h"
-#include "aht21.h"
 
-#ifndef APP_CPU_NUM
-#define APP_CPU_NUM PRO_CPU_NUM
-#endif
-
-
-
-#define AHT21_ID    0x38
-
-#define SDA_PIN 8
-#define SCL_PIN 9
-
-static const char *TAG = "i2cscanner";
-void printBits(size_t const size, void const * const ptr)
-{
-    unsigned char *b = (unsigned char*) ptr;
-    unsigned char byte;
-    int i, j;
-    
-    for (i = size-1; i >= 0; i--) {
-        for (j = 7; j >= 0; j--) {
-            byte = (b[i] >> j) & 1;
-            printf("%u", byte);
-        }
-    }
-    puts("");
+int main() {
+// initialize pigpio library
+if (gpioInitialise() < 0) {
+    printf("pigpio initialization failed\n");
+    return 1;
 }
 
-void task(void *ignore)
-{
-    i2c_config_t conf;
-    conf.mode = I2C_MODE_MASTER;
-    conf.sda_io_num = SDA_PIN;
-    conf.scl_io_num = SCL_PIN;
-    conf.sda_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.scl_pullup_en = GPIO_PULLUP_ENABLE;
-    conf.master.clk_speed = 100000;
-    i2c_param_config(I2C_NUM_0, &conf);
-
-    i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, 0, 0, 0);
-    uint8_t data[2] = {0};
-    uint8_t datawr[2] = {0};
-    //size_t count = 2;
-    ENS160_SET_ID(0x53);
-    ENS160_MODE_SET(I2C_NUM_0, ENS160_MODE_STANDARD);
-    AHT21_CALIBRATION(I2C_NUM_0);
-    while (1)
-    {
-        uint16_t data16 = 0;
-        uint8_t  data8  = 0;
-        float temp = 0;
-        float rh = 0;
-        AHT21_TRIGGER_MEASUREMENT(I2C_NUM_0);
-        vTaskDelay(200 / portTICK_PERIOD_MS);
-        ENS160_GET_eCO2(I2C_NUM_0, &data16);
-        printf("eCO2: %d ,", data16);
-        ENS160_GET_TVOC(I2C_NUM_0, &data16);
-        printf("TVOC: %d ,", data16);
-        ENS160_GET_AQI(I2C_NUM_0, &data8);
-        printf("AQI: %d\n", data8);
-        AHT21_READ_TEMP(I2C_NUM_0, &temp);
-        printf("Temp: %f\n", temp);
-        AHT21_READ_RH(I2C_NUM_0, &rh);
-        printf("RH: %f\n", rh);
-        vTaskDelay(800 / portTICK_PERIOD_MS);
-    }
+int handle = i2cOpen(1, 0x53, 0); // Open I2C bus 1 with device address 0x53
+if (handle < 0) {
+    printf("Failed to open I2C bus\n");
+    gpioTerminate();
+    return 1;
 }
 
-void app_main()
-{
-    // Start task
-    xTaskCreatePinnedToCore(task, TAG, configMINIMAL_STACK_SIZE * 10, NULL, 5, NULL, APP_CPU_NUM);
+// insert 200ms delay for I2C device to stabilize
+time_sleep(0.2);
+
+// Call your ENS160 functions here
+// read i2c ENS160 device PART ID and break if not 0x60
+uint8_t part_id;
+ENS160_READ_PART_ID(handle, &part_id);
+printf("Part ID: 0x%02X\n", part_id);   
+
+// set ENS160 device to standard mode
+ENS160_SET_MODE(handle, ENS160_MODE_STANDARD);
+
+// insert 1000ms delay for I2C device to stabilize
+time_sleep(1.0);
+
+// read AQI value from ENS160 device
+uint8_t aqi;
+ENS160_GET_AQI(handle, &aqi);
+printf("AQI: %d\n", aqi);
+
+// read TVOC value from ENS160 device
+uint16_t tvoc;
+ENS160_GET_TVOC(handle, &tvoc);
+printf("TVOC: %d\n", tvoc); 
+
+uint16_t eco2;
+ENS160_GET_eCO2(handle, &eco2);
+printf("eCO2: %d\n", eco2);
+
+i2cClose(handle);
+gpioTerminate();
+
+return 0;
 }
