@@ -34,16 +34,16 @@ time_sleep(1.0);
 // read AQI value from ENS160 device
 uint8_t aqi;
 ENS160_GET_AQI(handle, &aqi);
-printf("AQI: %d\n", aqi);
+printf("AQI: %d (0x%02X)\n", aqi, aqi);
 
 // read TVOC value from ENS160 device
 uint16_t tvoc;
 ENS160_GET_TVOC(handle, &tvoc);
-printf("TVOC: %d\n", tvoc); 
+printf("TVOC: %d (0x%04X)\n", tvoc, tvoc);
 
 uint16_t eco2;
 ENS160_GET_eCO2(handle, &eco2);
-printf("eCO2: %d\n", eco2);
+printf("eCO2: %d (0x%04X)\n", eco2, eco2);
 
 i2cClose(handle);
 gpioTerminate();
