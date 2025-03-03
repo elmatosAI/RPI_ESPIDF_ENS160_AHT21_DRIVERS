@@ -25,13 +25,8 @@ if (handle < 0) {
 time_sleep(0.2);
 
 // Call your ENS160 functions here
-// read i2c ENS160 device PART ID and break if not 0x60
-uint8_t part_id;
-ENS160_READ_PART_ID(handle, &part_id);
-printf("Part ID: 0x%02X\n", part_id);   
-
 // set ENS160 device to standard mode
-ENS160_SET_MODE(handle, ENS160_MODE_STANDARD);
+ENS160_MODE_SET(handle, ENS160_MODE_STANDARD);
 
 // insert 1000ms delay for I2C device to stabilize
 time_sleep(1.0);
