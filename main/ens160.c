@@ -36,6 +36,22 @@ int ENS160_MODE_SET(int handle, uint8_t mode){
     return i2c_master_write_slave_reg(handle, ENS160_REG_OPMODE, &mode, 1);
 }
 
+// function ENS160_DATA_READY: wait data to be ready and break after timeout
+int ENS160_DATA_READY(int handle){
+    uint8_t status = 0;
+    int timeout = 1000; // 1 second timeout
+    while (timeout > 0) {
+        if (ENS160_GET_STATUS(handle, &status) == 0) {
+            if (status & 0x01) {
+                return 0;
+            }
+        }
+        time_sleep(0.001); // 1ms delay
+        timeout--;
+    }
+    return -1;
+}
+
 int ENS160_READ_MODE(int handle, uint8_t* mode){
     return i2c_master_read_slave_reg(handle, ENS160_REG_OPMODE, mode, 1);
 }
