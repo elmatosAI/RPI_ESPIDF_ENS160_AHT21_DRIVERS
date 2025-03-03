@@ -19,12 +19,12 @@
 
 
 void ENS160_SET_ID(uint8_t ens160_addr);
-esp_err_t ENS160_MODE_SET(i2c_port_t i2c_num, uint8_t mode);
-esp_err_t ENS160_READ_MODE(i2c_port_t i2c_num, uint8_t* mode);
-esp_err_t ENS160_GET_STATUS(i2c_port_t i2c_num, uint8_t* status);
-esp_err_t ENS160_GET_eCO2(i2c_port_t i2c_num, uint16_t* eco2);
-esp_err_t ENS160_SET_TEMP_IN(i2c_port_t i2c_num, float temp);
-esp_err_t ENS160_SET_RH_IN(i2c_port_t i2c_num, float rh);
-esp_err_t ENS160_GET_AQI(i2c_port_t i2c_num, uint8_t* aqi);
-esp_err_t ENS160_GET_TVOC(i2c_port_t i2c_num, uint16_t* tvoc);
+int ENS160_MODE_SET(int i2c_num, uint8_t mode);
+int ENS160_READ_MODE(int i2c_num, uint8_t* mode);
+int ENS160_GET_STATUS(int i2c_num, uint8_t* status);
+int ENS160_GET_eCO2(int i2c_num, uint16_t* eco2);
+int ENS160_SET_TEMP_IN(int i2c_num, float temp);
+int ENS160_SET_RH_IN(int i2c_num, float rh);
+int ENS160_GET_AQI(int i2c_num, uint8_t* aqi);
+int ENS160_GET_TVOC(int i2c_num, uint16_t* tvoc);
 #endif
