@@ -7,11 +7,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-static const char *s_http_port = "8000";
+static const char *s_http_port = "http://0.0.0.0:8000";
+static int s_aqi = 0;
+static int s_tvoc = 0;
+static int s_eco2 = 0;
 
 static void handle_request(struct mg_connection *nc, struct mg_http_message *hm) {
     char data[100];
-    snprintf(data, sizeof(data), "{\"aqi\": %d, \"tvoc\": %d, \"eco2\": %d}", 0, 0, 0); // Placeholder values
+    snprintf(data, sizeof(data), "{\"aqi\": %d, \"tvoc\": %d, \"eco2\": %d}", s_aqi, s_tvoc, s_eco2);
     mg_http_reply(nc, 200, "Content-Type: application/json\r\n", "%s", data);
 }
 
@@ -40,6 +43,7 @@ void start_web_server() {
 }
 
 void update_web_data(int aqi, int tvoc, int eco2) {
-    // Update the data to be sent to the web page
-    // This function can be called from main.c to update the sensor data
+    s_aqi = aqi;
+    s_tvoc = tvoc;
+    s_eco2 = eco2;
 }
