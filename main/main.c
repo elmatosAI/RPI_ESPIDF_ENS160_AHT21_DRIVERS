@@ -6,6 +6,7 @@
 // include pigpio library
 #include <pigpio.h>
 #include "ens160.h"
+#include "publish.h"
 
 int main() {
 // initialize pigpio library
@@ -24,6 +25,10 @@ if (handle < 0) {
 // insert 200ms delay for I2C device to stabilize
 time_sleep(0.2);
 
+    // Start the web server in a separate thread
+    pthread_t web_server_thread;
+    pthread_create(&web_server_thread, NULL, (void *)start_web_server, NULL);
+
 // Call your ENS160 functions here
 // set ENS160 device to standard mode
 ENS160_MODE_SET(handle, ENS160_MODE_STANDARD);
@@ -32,33 +37,33 @@ ENS160_MODE_SET(handle, ENS160_MODE_STANDARD);
 if (ENS160_DATA_READY(handle) != 0) {
     return 1;
 }
+
 // read AQI value from ENS160 device
 uint8_t aqi;
 ENS160_GET_AQI(handle, &aqi);
 printf("AQI: %d (0x%02X)\n", aqi, aqi);
-// insert 100ms delay for I2C device to stabilize
 
 // Wait for data to be ready
 if (ENS160_DATA_READY(handle) != 0) {
     return 1;
 }
-
 // read TVOC value from ENS160 device
 uint16_t tvoc;
 ENS160_GET_TVOC(handle, &tvoc);
 printf("TVOC: %d (0x%04X)\n", tvoc, tvoc);
-// insert 100ms delay for I2C device to stabilize
 
 // Wait for data to be ready
 if (ENS160_DATA_READY(handle) != 0) {
     return 1;
 }
 
+// read eCO2 value from ENS160 device
 uint16_t eco2;
 ENS160_GET_eCO2(handle, &eco2);
 printf("eCO2: %d (0x%04X)\n", eco2, eco2);
-// insert 100ms delay for I2C device to stabilize
-time_sleep(0.1);
+
+// Update the web page with sensor data
+update_web_data(aqi, tvoc, eco2);
 
 i2cClose(handle);
 gpioTerminate();
