@@ -14,8 +14,8 @@ static int s_eco2 = 0;
 
 static void handle_request(struct mg_connection *nc, struct mg_http_message *hm) {
     char data[100];
-    snprintf(data, sizeof(data), "{\"aqi\": %d, \"tvoc\": %d, \"eco2\": %d}", s_aqi, s_tvoc, s_eco2);
-    mg_http_reply(nc, 200, "Content-Type: application/json\r\n", "%s", data);
+    snprintf(data, sizeof(data), "AQI: %d, TVOC: %d, eCO2: %d", s_aqi, s_tvoc, s_eco2);
+    mg_http_reply(nc, 200, "Content-Type: text/plain\r\n", "%s", data);
 }
 
 static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
