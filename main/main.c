@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>  // Include unistd.h for sleep
 #include <pigpio.h>
 #include <pthread.h>
 #include <signal.h>
@@ -18,12 +19,17 @@ void signal_handler(int signum) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 2) {
-        printf("Usage: %s <csv_filename>\n", argv[0]);
+    if (argc != 3) {
+        printf("Usage: %s <csv_filename> <interval_seconds>\n", argv[0]);
         return 1;
     }
 
     const char *csv_filename = argv[1];
+    int interval = atoi(argv[2]);
+    if (interval <= 0) {
+        printf("Interval must be a positive integer.\n");
+        return 1;
+    }
 
     // Initialize pigpio library
     if (gpioInitialise() < 0) {
@@ -91,8 +97,8 @@ int main(int argc, char* argv[]) {
         // Append the data to the CSV file
         append_csv_data(aqi, tvoc, eco2);
 
-        // Sleep for a short interval before reading the next set of data
-        sleep(1);
+        // Sleep for the specified interval before reading the next set of data
+        sleep(interval);
     }
 
     // Close the CSV file
