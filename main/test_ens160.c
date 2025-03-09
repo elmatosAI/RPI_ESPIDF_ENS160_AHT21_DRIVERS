@@ -22,7 +22,9 @@ int main() {
 
     // Set ENS160 device to standard mode
     ENS160_MODE_SET(handle, ENS160_MODE_STANDARD);
-
+   // Insert 200ms delay for I2C device to stabilize
+   time_sleep(0.2);
+   
     // Wait for data to be ready
     if (ENS160_DATA_READY(handle) != 0) {
         printf("Data not ready\n");
