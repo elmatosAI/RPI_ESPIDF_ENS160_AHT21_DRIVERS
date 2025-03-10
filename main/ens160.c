@@ -57,17 +57,16 @@ int ENS160_DATA_READY(int handle){
 
 // function ENS160_GET_DEVICE_ID: read device ID from register 0x00 and 0x01 using i2cReadI2CBlockData
 int ENS160_GET_DEVICE_ID(int handle, uint16_t* device_id) {
-    uint8_t data[2] = {0xFF, 0xFF};
-    int ret = i2cReadI2CBlockData(handle, ENS160_REG_DEVICE_ID, (char*)data, 2);
+    *device_id = 0xFFFF;
+    int ret = i2cReadI2CBlockData(handle, ENS160_REG_DEVICE_ID, (char*)device_id, 2);
     if (ret < 0) {
         return ret;
     }
-    // if verbose is defined, print the device ID LSB and MSB from data
+    // if verbose is defined, print the device ID LSB and MSB from device_id
 #ifdef VERBOSE
-    printf("Device ID LSB: 0x%02X\n", data[0]);
-    printf("Device ID MSB: 0x%02X\n", data[1]);
+    printf("Device ID LSB: 0x%02X\n", *device_id & 0xFF);
+    printf("Device ID MSB: 0x%02X\n", (*device_id >> 8) & 0xFF);
 #endif
-    *device_id = (data[0] << 8) | data[1];
     return 0;
 }
 
