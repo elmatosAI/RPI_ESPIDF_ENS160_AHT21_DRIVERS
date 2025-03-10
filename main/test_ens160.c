@@ -20,6 +20,8 @@ int main(int argc, char* argv[]) {
     if (gpioInitialise() < 0) {
         printf("pigpio initialization failed\n");
         return 1;
+    }else{
+        printf("pigpio initialization successful\n");
     }
 
     int handle = i2cOpen(1, 0x53, 0); // Open I2C bus 1 with device address 0x53
@@ -27,8 +29,25 @@ int main(int argc, char* argv[]) {
         printf("Failed to open I2C bus\n");
         gpioTerminate();
         return 1;
+    }else{
+        printf("I2C bus opened successfully with address 0x53\n");
     }
 
+    // insert sleep_time delay for I2C device to stabilize
+    sleep(sleep_time);
+
+    // In I2C address 0x53, verify the device ID is 0x60 in register 0x00 and 0x01 in register 0x01
+    uint8_t device_id[2];
+    ENS160_GET_DEVICE_ID(handle, device_id);
+    printf("Device ID: 0x%02X%02X\n", device_id[0], device_id[1]);
+    // if the device ID is not 0x6001, exit the program
+    if (device_id[0] != 0x60 || device_id[1] != 0x01) {
+        printf("Device ID is not 0x6001\n");
+        i2cClose(handle);
+        gpioTerminate();
+        return 1;
+    }
+    
     // Insert initial delay for I2C device to stabilize
     sleep(sleep_time);
 
@@ -44,6 +63,8 @@ int main(int argc, char* argv[]) {
         i2cClose(handle);
         gpioTerminate();
         return 1;
+    }else{
+        printf("Data ready\n");
     }
 
     // Sleep for the specified interval before the next ac

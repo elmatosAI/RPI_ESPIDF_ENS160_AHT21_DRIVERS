@@ -46,7 +46,7 @@ int ENS160_DATA_READY(int handle){
                 return 0;
             }
         }
-        time_sleep(0.001); // 1ms delay
+        time_sleep(0.005); // 1ms delay
         timeout--;
     }
     return -1;
