@@ -21,6 +21,7 @@
 void ENS160_SET_ID(uint8_t ens160_addr);
 int ENS160_MODE_SET(int i2c_num, uint8_t mode);
 int ENS160_DATA_READY(int i2c_num);
+int ENS160_GET_DEVICE_ID(int i2c_num, uint8_t* device_id);
 int ENS160_READ_MODE(int i2c_num, uint8_t* mode);
 int ENS160_GET_STATUS(int i2c_num, uint8_t* status);
 int ENS160_GET_eCO2(int i2c_num, uint16_t* eco2);
