@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#define ENS160_REG_DEVICE_ID    0x00
 #define ENS160_REG_OPMODE       0x10
 #define ENS160_REG_TEMP_IN      0x13
 #define ENS160_REG_RH_IN        0x15
