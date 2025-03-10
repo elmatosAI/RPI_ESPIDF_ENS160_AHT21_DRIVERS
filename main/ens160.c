@@ -66,8 +66,8 @@ int ENS160_GET_DEVICE_ID(int handle, uint16_t* device_id) {
 #ifdef VERBOSE
     printf("Device ID LSB: 0x%02X\n", data[0]);
 #endif
-    // wait for 200 ms before reading the next byte
-    time_sleep(0.2);
+    // wait for 2000 ms before reading the next byte
+    time_sleep(2);
     ret = i2c_master_read_slave_reg(handle, ENS160_REG_DEVICE_ID + 1, &data[1], 1);
     if (ret < 0) {
         return ret;
