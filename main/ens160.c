@@ -53,7 +53,7 @@ int ENS160_DATA_READY(int handle){
 }
 
 // function ENS160_GET_DEVICE_ID: read device ID from register 0x00 and 0x01
-int ENS160_GET_DEVICE_ID(int handle, uint8_t* device_id){
+int ENS160_GET_DEVICE_ID(int handle, uint16_t* device_id){
     return i2c_master_read_slave_reg(handle, ENS160_REG_DEVICE_ID, device_id, 2);
 }
 

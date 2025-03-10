@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     sleep(sleep_time);
 
     // In I2C address 0x53, verify the device ID is 0x60 in register 0x00 and 0x01 in register 0x01
-    uint8_t device_id[2]={0xFF, 0xFF};
+    uint16_t device_id[2]={0xFF, 0xFF};
     ENS160_GET_DEVICE_ID(handle, device_id);
     printf("Device ID: 0x%02X%02X\n", device_id[0], device_id[1]);
     // if the device ID is not 0x0160, exit the program
