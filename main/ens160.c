@@ -1,6 +1,9 @@
 #include "ens160.h"
 #include <pigpio.h>
 
+// add verbose conditional compilation
+//#define VERBOSE
+
 static uint8_t ens160_addr_local = 0x53;
 
 static int i2c_master_read_slave_reg(int handle, uint8_t i2c_reg, uint8_t* data_rd, size_t size)
@@ -59,10 +62,18 @@ int ENS160_GET_DEVICE_ID(int handle, uint16_t* device_id) {
     if (ret < 0) {
         return ret;
     }
+    // if verbose is defined, print the device ID LSB from data[0]
+#ifdef VERBOSE
+    printf("Device ID LSB: 0x%02X\n", data[0]);
+#endif
     ret = i2c_master_read_slave_reg(handle, ENS160_REG_DEVICE_ID + 1, &data[1], 1);
     if (ret < 0) {
         return ret;
     }
+    // if verbose is defined, print the device ID MSB from data[1]
+#ifdef VERBOSE
+    printf("Device ID MSB: 0x%02X\n", data[1]);
+#endif
     *device_id = (data[0] << 8) | data[1];
     return ret;
 }
